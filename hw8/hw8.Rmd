@@ -1,0 +1,73 @@
+---
+title: "Data Leakage in Machine Learning"
+author: "Chenyan Feng"
+date: "2023-03-30"
+output:
+  word_document:
+    toc: yes
+  html_document:
+    toc: yes
+---
+
+# Abstract
+Data leakage is a significant issue in machine learning, which occurs when the model is trained on data that is not available at the prediction time, leading to inaccurate predictions. In this report, we will discuss the concept of data leakage, its impact, and different types of data leakage. We will also suggest corrective measures to avoid data leakage.
+
+# Introduction
+According to the article "Data Leakage in Machine Learning: How it can be detected and minimize the risk", one of the most fundamental examples of data leakage is when the true label of a dataset is inadvertently included as a feature in the model. For instance, if an object is labeled as an apple, the algorithm would learn to predict that it is an apple. 
+
+She also pointed a bank example. The example is about attempting to predict whether a customer visiting a bank's website will open an account. The user's record includes an account number field, which is blank for users still browsing the site, but it gets filled in after they create an account. Using the user account field as a feature in this situation is not viable because it may not be available while the user is still browsing the site, leading to inaccurate predictions. This is an example of data leakage.
+
+So, we can know that Machine learning models are trained on datasets to learn patterns and relationships between input and output variables, with the quality and size of the dataset being crucial factors in model accuracy. However, there are times when the model is trained on data that is not available at prediction time, resulting in data leakage. This can be accidental, and the model may perform well on the training and validation data, but fail on new, unseen data. 
+
+
+# Impact of Data Leakage
+Data leakage can have a significant impact on the performance of machine learning models. It can lead to unrealistic model performance, and the model may fail to perform when deployed in the real world. Data leakage can also undermine the validity and reliability of the model, leading to erroneous decision-making.
+
+For instance, in "Leakage in Data Mining: Formulation, Detection, and Avoidance," the authors mention that several major data mining competitions, such as KDD-Cup 2008 and the INFORMS 2010 Data Mining Challenge, suffered from severe leakage due to a gap in theory and methodology. Attempts to fix leakage resulted in the introduction of new leakage, which was even harder to deal with. In other competitions, such as KDD-Cup 2007 and IJCNN 2011 Social Network Challenge, leakage from available external sources undermined the organizers' implicit true goal of encouraging submissions that would be useful for the domain.
+
+This case illustrates the importance of detecting and avoiding data leakage, particularly in cases where the model's performance has a significant impact on decision-making.
+
+# Types of Data Leakage
+Javier Porras's article "How to identify and treat data leakage" outlines various types of data leakage that can occur in machine learning models:
+
+1.Target Leakage: When the model includes information that is not available at the prediction time, leading to overfitting and poor generalization.
+
+2.Train-Test Contamination: When information from the test set is used in the training process, leading to overfitting and unrealistic model performance.
+
+3.Time Leakage: When the model includes information from the future that is not available at the prediction time, leading to inaccurate predictions.
+
+4.Label Leakage: When the label or target variable is used to derive the input features, leading to overfitting and unrealistic model performance.
+
+These types of data leakage can severely impact the performance and reliability of machine learning models. It is crucial to identify and prevent these types of leakage to ensure accurate and effective predictions.
+
+# Corrective Measures
+To prevent data leakage in machine learning models, Jason Brownlee's article "Data Leakage in Machine Learning" suggests the following corrective measures:
+
+1.Careful Data Splitting: The data should be split into training, validation, and test sets carefully to ensure there is no overlap between the sets. This can be done using techniques such as stratified sampling or time-based splitting.
+
+2.Feature Engineering: Features that are not available at the time of prediction should be removed from the model. This can be done by carefully analyzing the features and their relevance to the target variable.
+
+3.Use of Cross-validation: Cross-validation can be used to validate the model and check for overfitting. This involves training the model on different subsets of the data and evaluating its performance on the remaining data.
+
+4.Use of Time-Series Cross-Validation: For time-series data, time-series cross-validation can be used to ensure that the model is not using future information. This involves splitting the data into training and test sets based on time and validating the model on each time period separately.
+
+These measures include careful data splitting, feature engineering, the use of cross-validation, and time-series cross-validation for time-series data. By following these techniques, one can avoid overlap between the training, validation, and test sets, remove features that are not available at prediction time, validate the model to check for overfitting, and ensure that future information is not being used in the model.
+
+# Conclusion:
+In conclusion, data leakage is a serious problem that can have far-reaching consequences for machine learning models and real-world applications. It can undermine the validity and reliability of the models, leading to erroneous decision-making. Additionally, data breaches and leakage can have significant financial, legal, and reputational consequences for organizations, as demonstrated by the example of the bank cited by Prerna Singh, data breaches resulting from data leakage can have substantial financial, legal, and reputational repercussions for organizations..
+
+Furthermore, detecting and mitigating data leakage is an ongoing challenge, as new sources of leakage can emerge as models and data change over time. As such, it is important to continually monitor models for signs of leakage and to update techniques and practices as needed to prevent future leaks. By being vigilant and proactive in preventing data leakage, machine learning practitioners and organizations can ensure that their models remain accurate, reliable, and trustworthy, while avoiding the negative impacts of data breaches and leakage.
+
+# References:
+
+Andrew Ng, et al., “CheXNet: Radiologist-Level Pneumonia Detection on Chest X-Rays with Deep Learning,” arXiv preprint arXiv:1711.05225, 2017.
+
+S. Pino, “A cautionary tale about using Patient ID as a feature in chest X-ray models,” Twitter, June 17, 2022.
+
+Prerna Singh, "Data Leakage in Machine Learning: How it can be detected and minimize the risk," October 26, 2021. Available: https://towardsdatascience.com/data-leakage-in-machine-learning-how-it-can-be-detected-and-minimize-the-risk-8ef4e3a97562#:~:text=The%20most%20fundamental%20example%20of,that%20it%20is%20an%20apple.
+
+Shachar Kaufman, Saharon Rosset, Claudia Perlich, "Leakage in Data Mining:Formulation, Detection, and Avoidance," 2011. Available: https://www.cs.umb.edu/~ding/history/470_670_fall_2011/papers/cs670_Tran_PreferredPaper_LeakingInDataMining.pdf
+
+Encora, "How to Identify and Treat Data Leakage," 2021. Available: https://www.encora.com/insights/how-to-identify-and-treat-data-leakage
+
+Jason Brownlee, "Data Leakage in Machine Learning," August 15, 2020. Available: https://machinelearningmastery.com/data-leakage-machine-learning/

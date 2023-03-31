@@ -1,0 +1,127 @@
+---
+title: "Untitled"
+author: "Chenyan Feng"
+date: "2023-03-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1)	Develop Logistic Regression, LDA, QDA and KNN based survival prediction models using Pclass, Sex, Age, SibSp, Parch, and Embarked as predictor variables.  Note that some of these variables may need to be defined as categorical (factors in R).  Also, Age has lot of missing values. The missing values may need to be imputed (e.g., mean) for using this variable. Try few values of k in KNN to determine suitable value for K. Compare and interpret True Positive (TP) and False Positive (FP) of the different models using test data.
+
+
+```{r}
+# Load data
+train_data = read.csv("ProjectTrain.csv")
+test_data = read.csv("ProjectTest.csv")
+
+# Convert Sex and Embarked to factors
+train_data$Sex = factor(train_data$Sex)
+train_data$Embarked = factor(train_data$Embarked)
+test_data$Sex = factor(test_data$Sex)
+test_data$Embarked = factor(test_data$Embarked)
+
+# Impute missing values of Age with mean
+train_data$Age[is.na(train_data$Age)] = mean(train_data$Age, na.rm = TRUE)
+test_data$Age[is.na(test_data$Age)] = mean(train_data$Age, na.rm = TRUE)
+
+# Calculate the contingency table and chi-square statistic for Sex and Embarked
+table_SE = table(train_data$Sex, train_data$Embarked)
+chisq_SE = chisq.test(table_SE)$statistic
+# Calculate the correlation matrix for numeric variables
+predictors <- train_data[, c("Pclass", "Age", "SibSp", "Parch")]
+cor_matrix <- cor(predictors)
+# Print the results
+print("Contingency table for Sex and Embarked:")
+print(table_SE)
+print(paste0("Chi-square statistic for Sex and Embarked: ", chisq_SE))
+print("Correlation matrix for numeric predictors:")
+print(cor_matrix)
+
+
+#p1
+# Logistic regression model
+log_model = glm(Survived ~ Pclass + Sex + Age + SibSp + Parch + Embarked, 
+                 data = train_data, 
+                 family = "binomial")
+log_predictions = predict(log_model, newdata = test_data, type = "response")
+log_predictions = ifelse(log_predictions > 0.5, 1, 0)
+log_cm = table(log_predictions, test_data$Survived)
+log_accuracy = sum(diag(log_cm)) / sum(log_cm)
+cat(paste("Logistic regression accuracy:", log_accuracy, "\n"))
+
+# LDA model
+library(MASS)
+lda_model <- lda(Survived ~ Pclass + Sex + Age + SibSp + Parch + Embarked, 
+                 data = train_data)
+lda_predictions <- predict(lda_model, newdata = test_data)
+lda_cm <- table(lda_predictions$class, test_data$Survived)
+lda_accuracy <- sum(diag(lda_cm)) / sum(lda_cm)
+cat(paste("LDA accuracy:", lda_accuracy, "\n"))
+
+# QDA model with regularization
+qda_model <- qda(Survived ~ Pclass + Sex + Age + SibSp + Parch, 
+                     data = train_data)
+qda_predictions_reg <- predict(qda_model, newdata = test_data)
+qda_cm_reg <- table(qda_predictions_reg$class, test_data$Survived)
+qda_accuracy_reg <- sum(diag(qda_cm_reg)) / sum(qda_cm_reg)
+cat(paste("QDA with regularization accuracy:", qda_accuracy_reg, "\n"))
+
+# Convert Sex and Embarked to factors
+train_data$Sex <- factor(train_data$Sex)
+train_data$Embarked <- factor(train_data$Embarked)
+test_data$Sex <- factor(test_data$Sex)
+test_data$Embarked <- factor(test_data$Embarked)
+# Encode factors as numeric values
+train_data$Sex <- as.numeric(train_data$Sex) - 1
+train_data$Embarked <- as.numeric(train_data$Embarked)
+test_data$Sex <- as.numeric(test_data$Sex) - 1
+test_data$Embarked <- as.numeric(test_data$Embarked)
+# Fit KNN model
+library(class)
+set.seed(123)
+# KNN model with k=5
+knn_model <- knn(train = train_data[, c("Pclass", "Sex", "Age", "SibSp", "Parch", "Embarked")], 
+                 test = test_data[, c("Pclass", "Sex", "Age", "SibSp", "Parch", "Embarked")], 
+                 cl = train_data$Survived, 
+                 k = 5)
+knn_cm <- table(knn_model, test_data$Survived)
+knn_accuracy <- sum(diag(knn_cm)) / sum(knn_cm)
+cat(paste("KNN accuracy with k = 5:", knn_accuracy, "\n")) # Accuracy = 0.738
+
+# KNN model with k=3
+knn_model <- knn(train = train_data[, c("Pclass", "Sex", "Age", "SibSp", "Parch", "Embarked")], 
+                 test = test_data[, c("Pclass", "Sex", "Age", "SibSp", "Parch", "Embarked")], 
+                 cl = train_data$Survived, 
+                 k = 3)
+knn_cm <- table(knn_model, test_data$Survived)
+knn_accuracy <- sum(diag(knn_cm)) / sum(knn_cm)
+cat(paste("KNN accuracy with k = 3:", knn_accuracy, "\n")) # Accuracy = 0.753
+
+# KNN model with k=7
+knn_model <- knn(train = train_data[, c("Pclass", "Sex", "Age", "SibSp", "Parch", "Embarked")], 
+                 test = test_data[, c("Pclass", "Sex", "Age", "SibSp", "Parch", "Embarked")], 
+                 cl = train_data$Survived, 
+                 k = 7)
+knn_cm <- table(knn_model, test_data$Survived)
+knn_accuracy <- sum(diag(knn_cm)) / sum(knn_cm)
+cat(paste("KNN accuracy with k = 7:", knn_accuracy, "\n")) # Accuracy = 0.73
+
+log_cm 
+lda_cm
+qda_cm_reg
+knn_cm
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
